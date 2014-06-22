@@ -18,12 +18,16 @@ class TFWException: public virtual boost::exception, public virtual std::excepti
 
 namespace tfw {
 
+class TransferFunction1D;
+
 class ITransferFunctionVisitor
 {
 public:
 	virtual
 	~ITransferFunctionVisitor() {}
 
+	virtual void
+	visit(TransferFunction1D &);
 };
 
 class ATransferFunction
@@ -38,6 +42,19 @@ public:
 	{
 		return "Dummy";
 	}
+};
+
+
+class TransferFunction1D : public ATransferFunction
+{
+public:
+	void
+	accept(ITransferFunctionVisitor &aVisitor) override
+	{
+		aVisitor.visit(*this);
+	}
+	
+
 };
 
 } // namesapce tfw

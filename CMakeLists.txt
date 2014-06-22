@@ -32,6 +32,9 @@ SET(${PROJECT_NAME}_HEADERS
 	"include/tfw/data/TransferFunctionPalette.hpp"
 	"include/tfw/data/TransferFunctionLoading.hpp"
 	"include/tfw/PaletteWidget.hpp"
+	"include/tfw/TransferFunctionEditor1D.hpp"
+	"include/tfw/CreateEditorVisitor.hpp"
+	"include/tfw/ATransferFunctionEditor.hpp"
 	)
 
 SET(${PROJECT_NAME}_SOURCES
