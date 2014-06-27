@@ -3,16 +3,10 @@
 #include <memory>
 #include <string>
 
-//TODO - move to utils
-#include <stdexcept>
-#include <exception>
-#include <boost/exception/all.hpp>
-
-#define TFW_THROW(x) BOOST_THROW_EXCEPTION(x)
+#include "tfw/Exceptions.hpp"
 
 namespace tfw {
 
-class TFWException: public virtual boost::exception, public virtual std::exception {};
 
 } // namesapce tfw
 
@@ -27,7 +21,13 @@ public:
 	~ITransferFunctionVisitor() {}
 
 	virtual void
-	visit(TransferFunction1D &);
+	visit(TransferFunction1D &aTF)
+	{
+		visit(static_cast<const TransferFunction1D &>(aTF));
+	}
+
+	virtual void
+	visit(const TransferFunction1D &) = 0;
 };
 
 class ATransferFunction
@@ -35,6 +35,9 @@ class ATransferFunction
 public:
 	virtual void
 	accept(ITransferFunctionVisitor &aVisitor) = 0;
+
+	virtual void
+	accept(ITransferFunctionVisitor &aVisitor) const = 0;
 
 
 	std::string
@@ -53,7 +56,13 @@ public:
 	{
 		aVisitor.visit(*this);
 	}
-	
+
+	void
+	accept(ITransferFunctionVisitor &aVisitor) const override
+	{
+		aVisitor.visit(*this);
+	}
+
 
 };
 

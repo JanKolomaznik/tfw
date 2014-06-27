@@ -23,6 +23,10 @@ public:
 
 	void
 	setPalette(std::shared_ptr<TransferFunctionPalette> aPalette);
+
+public slots:
+	void
+	onItemDoubleClicked(const QModelIndex & index);
 private:
 	std::unique_ptr<Ui::PaletteWidget> mUi;
 	std::unique_ptr<TransferFunctionPaletteModel> mModel;

@@ -14,7 +14,6 @@ class ATransferFunctionEditor : public QWidget
 
 public:
 	explicit ATransferFunctionEditor(QWidget *parent = nullptr);
-	~ATransferFunctionEditor();
 
 private:
 

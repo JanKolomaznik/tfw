@@ -31,8 +31,10 @@ SET(${PROJECT_NAME}_HEADERS
 	"include/tfw/data/ATransferFunction.hpp"
 	"include/tfw/data/TransferFunctionPalette.hpp"
 	"include/tfw/data/TransferFunctionLoading.hpp"
+	"include/tfw/Exceptions.hpp"
 	"include/tfw/PaletteWidget.hpp"
 	"include/tfw/TransferFunctionEditor1D.hpp"
+	"include/tfw/TransferFunctionView.hpp"
 	"include/tfw/CreateEditorVisitor.hpp"
 	"include/tfw/ATransferFunctionEditor.hpp"
 	)
@@ -41,10 +43,12 @@ SET(${PROJECT_NAME}_SOURCES
 	"src/data/TransferFunctionLoading.cpp"
 	"src/data/TransferFunctionPalette.cpp"
 	"src/PaletteWidget.cpp"
+	"src/TransferFunctionEditor1D.cpp"
 	)
 
 qt5_wrap_ui(${PROJECT_NAME}_UIS
 	"ui/PaletteWidget.ui"
+	"ui/TransferFunctionEditor1D.ui"
 	)
 
 ADD_LIBRARY(${PROJECT_NAME} STATIC ${${PROJECT_NAME}_SOURCES} ${${PROJECT_NAME}_HEADERS} ${${PROJECT_NAME}_UIS})

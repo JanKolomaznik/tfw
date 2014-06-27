@@ -90,6 +90,11 @@ public:
 	{
 		return QVariant();
 	}
+
+	const TransferFunctionPalette &palette() const
+	{
+		return *mPalette;
+	}
 protected:
 
 	std::shared_ptr<TransferFunctionPalette> mPalette;
