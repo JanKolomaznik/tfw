@@ -13,17 +13,67 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
+  <layout class="QHBoxLayout" name="horizontalLayout">
    <item>
-    <widget class="tfw::TransferFunctionView" name="mTransferFunctionView"/>
+    <widget class="QGroupBox" name="groupBox">
+     <property name="title">
+      <string>Edited Channel</string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <item>
+       <widget class="QRadioButton" name="mRedRadioButton">
+        <property name="text">
+         <string>Red</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QRadioButton" name="mGreenRadioButton">
+        <property name="text">
+         <string>Green</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QRadioButton" name="mBlueRadioButton">
+        <property name="text">
+         <string>Blue</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QRadioButton" name="mAlphaRadioButton">
+        <property name="text">
+         <string>Alpha</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <spacer name="verticalSpacer">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>20</width>
+          <height>40</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="tfw::FreeHandTransferFunctionView" name="mTransferFunctionView"/>
    </item>
   </layout>
  </widget>
  <customwidgets>
   <customwidget>
-   <class>tfw::TransferFunctionView</class>
+   <class>tfw::FreeHandTransferFunctionView</class>
    <extends>QGraphicsView</extends>
-   <header>tfw/TransferFunctionView.hpp</header>
+   <header>tfw/TransferFunctionEditor1D.hpp</header>
   </customwidget>
  </customwidgets>
  <resources/>
