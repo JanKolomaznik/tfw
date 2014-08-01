@@ -13,6 +13,13 @@ PaletteWidget::PaletteWidget(QWidget *parent)
 	mUi->setupUi(this);
 
 	QObject::connect(mUi->mPaletteView, &QListView::doubleClicked, this, &PaletteWidget::onItemDoubleClicked);
+
+	QObject::connect(
+		mUi->mPaletteView,
+		&QListView::clicked,
+		[this](const QModelIndex &index) {
+			emit changedTransferFunctionSelection(index.row());
+		});
 }
 
 PaletteWidget::~PaletteWidget()
@@ -26,11 +33,30 @@ PaletteWidget::setPalette(std::shared_ptr<TransferFunctionPalette> aPalette)
 	mUi->mPaletteView->setModel(mModel.get());
 }
 
+int
+PaletteWidget::getSelectedTransferFunctionIndex() const
+{
+	return mUi->mPaletteView->currentIndex().row();
+}
+
+const ATransferFunction &
+PaletteWidget::getTransferFunction(int aIndex) const
+{
+	return mModel->palette().get(aIndex);
+}
+
 void PaletteWidget::onItemDoubleClicked(const QModelIndex &index)
 {
-	const auto &transfer_function = mModel->palette().get(index.row());
+	auto &transfer_function = mModel->palette().get(index.row());
 	auto visitor = CreateEditorVisitor();
 	transfer_function.accept(visitor);
+
+	QObject::connect(
+		visitor.editor,
+		&ATransferFunctionEditor::transferFunctionModified,
+		[this, index] () {
+			emit transferFunctionModified(index.row());
+		});
 }
 
 } // namespace tfw

@@ -8,15 +8,17 @@
 
 namespace tfw {
 
+
 class ATransferFunctionEditor : public QWidget
 {
 	Q_OBJECT
-
 public:
-	explicit ATransferFunctionEditor(QWidget *parent = nullptr);
-
-private:
-
+	explicit ATransferFunctionEditor(QWidget *parent = nullptr)
+		: QWidget(parent)
+	{}
+signals:
+	void
+	transferFunctionModified();
 };
 
 } // namespace tfw

@@ -11,15 +11,16 @@ class CreateEditorVisitor : public ITransferFunctionVisitor
 {
 public:
 	virtual void
-	visit(const TransferFunction1D &) override
+	visit(TransferFunction1D &aTransferFunction) override
 	{
 		// TODO
-		auto editor = new TransferFunctionEditor1D();
+		auto tf_editor = new TransferFunctionEditor1D();
+		tf_editor->setTransferFunction(aTransferFunction);
+		editor = tf_editor;
 		editor->show();
 	}
 
-private:
-
+	ATransferFunctionEditor *editor;
 };
 
 } // namespace tfw

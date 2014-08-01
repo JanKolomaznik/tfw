@@ -8,13 +8,13 @@ namespace tfw {
 
 
 TransferFunctionEditor1D::TransferFunctionEditor1D(QWidget *parent)
-	: QWidget(parent)
+	: ATransferFunctionEditor(parent)
 	, ui(new Ui::TransferFunctionEditor1D)
 {
 	ui->setupUi(this);
 
 	QRectF rect = QRectF(0.0, 0.0, 100, 100);
-	mTFScene.addRect(rect, QPen(), QBrush(Qt::white));
+	mBoundingRect = mTFScene.addRect(rect, QPen(), QBrush(Qt::white));
 
 	std::array<QColor, cChannelCount> colors = {
 		QColor(255, 0, 0),
@@ -31,7 +31,7 @@ TransferFunctionEditor1D::TransferFunctionEditor1D(QWidget *parent)
 		mCurves[i].setColor(colors[i]);
 		mTFScene.addItem(&(mCurves[i]));
 		QObject::connect(mRadioButtons[i], &QRadioButton::clicked, [i, this]() {
-			ui->mTransferFunctionView->setEditedCurve(&(mCurves[i]));
+			ui->mTransferFunctionView->setEditedCurve(&(mCurves[i]), i);
 		});
 	}
 
@@ -41,13 +41,33 @@ TransferFunctionEditor1D::TransferFunctionEditor1D(QWidget *parent)
 	//mTFScene.addEllipse(20, 70, 5, 5);//->setFlag(QGraphicsItem::ItemIgnoresTransformations, true);
 
 	ui->mTransferFunctionView->setScene(&mTFScene);
-	ui->mTransferFunctionView->setSceneRect(rect);
-	ui->mTransferFunctionView->fitInView(rect);
+
+	QObject::connect(
+		ui->mTransferFunctionView,
+		&TransferFunctionView::transferFunctionModified,
+		this,
+		&TransferFunctionEditor1D::transferFunctionModified);
 }
 
 TransferFunctionEditor1D::~TransferFunctionEditor1D()
 {
 	delete ui;
+}
+
+void
+TransferFunctionEditor1D::setTransferFunction(TransferFunction1D &aTransferFunction)
+{
+	QRectF rect = QRectF(aTransferFunction.range().first, 0.0, aTransferFunction.range().second, 1.0);
+	for (size_t i = 0; i < cChannelCount; ++i) {
+		mCurves[i].setBoundingRect(rect);
+		mCurves[i].clear();
+	}
+
+	ui->mTransferFunctionView->setTransferFunction(aTransferFunction);
+
+	mBoundingRect->setRect(rect);
+	ui->mTransferFunctionView->setSceneRect(rect);
+	ui->mTransferFunctionView->fitInView(rect);
 }
 
 } // namespace tfw

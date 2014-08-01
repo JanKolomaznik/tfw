@@ -9,6 +9,8 @@
 #include <QPointF>
 #include <QWheelEvent>
 
+#include "tfw/data/ATransferFunction.hpp"
+
 namespace tfw {
 
 
@@ -56,17 +58,14 @@ public:
 		auto pointComparator = [](const QPointF &aFirst, const QPointF &aSecond) -> bool {
 			return aFirst.x() < aSecond.x();
 		};
-		if (!pointComparator(aFirst, aSecond)) {
-			std::swap(aFirst, aSecond);
-		}
-
-		auto lower = std::lower_bound(begin(mPoints), end(mPoints), aFirst, pointComparator);
-		auto upper = std::upper_bound(lower/*begin(mPoints)*/, end(mPoints), aSecond, pointComparator);
-
-		auto it = mPoints.erase(lower, upper);
-		std::vector<QPointF> tmpVec = { aFirst, aSecond };
-		mPoints.insert(it, begin(tmpVec), end(tmpVec));
+		tfw::insertRange(mPoints, aFirst, aSecond, pointComparator);
 		update();
+	}
+
+	void
+	clear()
+	{
+		mPoints.clear();
 	}
 
 protected:
@@ -93,7 +92,9 @@ public slots :
 	{
 		scale(aZoomFactor, 1.0);
 	}
-
+signals:
+	void
+	transferFunctionModified();
 protected:
 	void
 	showEvent(QShowEvent * event) override

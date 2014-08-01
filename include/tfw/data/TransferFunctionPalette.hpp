@@ -26,6 +26,15 @@ public:
 		return *tf;
 	}
 
+	ATransferFunction & get(int aIndex)
+	{
+		auto &tf = mFunctions.at(aIndex);
+		if (!tf) {
+			TFW_THROW(TFWException());
+		}
+		return *tf;
+	}
+
 	void
 	add(std::shared_ptr<ATransferFunction> aTransferFunction)
 	{
@@ -91,7 +100,14 @@ public:
 		return QVariant();
 	}
 
-	const TransferFunctionPalette &palette() const
+	const TransferFunctionPalette &
+	palette() const
+	{
+		return *mPalette;
+	}
+
+	TransferFunctionPalette &
+	palette()
 	{
 		return *mPalette;
 	}
