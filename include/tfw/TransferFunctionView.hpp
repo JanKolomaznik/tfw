@@ -129,6 +129,25 @@ protected:
 		QGraphicsView::resizeEvent(event);
 		fitInView(rect);
 	}
+
+	void
+	drawBackground(QPainter * painter, const QRectF & rect) override
+	{
+		painter->fillRect(rect, Qt::lightGray);
+
+		QPen gridPen(Qt::black);
+		gridPen.setStyle(Qt::DashLine);
+		gridPen.setWidth(0);
+		gridPen.setCosmetic(true);
+		painter->setPen(gridPen);
+
+		double hSections = width() / 30.0;
+		double sectionWidth = rect.width() / hSections;
+		double step = std::pow(10.0, std::ceil(std::log10(sectionWidth)));
+		for (double x = std::ceil(rect.left() / step) * step; x <= rect.right(); x += step) {
+			painter->drawLine(x, rect.bottom(), x, rect.top());
+		}
+	}
 private:
 };
 

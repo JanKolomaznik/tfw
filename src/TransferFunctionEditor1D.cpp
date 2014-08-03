@@ -14,13 +14,13 @@ TransferFunctionEditor1D::TransferFunctionEditor1D(QWidget *parent)
 	ui->setupUi(this);
 
 	QRectF rect = QRectF(0.0, 0.0, 100, 100);
-	mBoundingRect = mTFScene.addRect(rect, QPen(), QBrush(Qt::white));
+	//mBoundingRect = mTFScene.addRect(rect, QPen(Qt::white), QBrush(Qt::white));
 
 	std::array<QColor, cChannelCount> colors = {
 		QColor(255, 0, 0),
 		QColor(0, 255, 0),
 		QColor(0, 0, 255),
-		QColor(0, 0, 0)
+		QColor(255, 255, 255)
 	};
 	mRadioButtons[0] = ui->mRedRadioButton;
 	mRadioButtons[1] = ui->mGreenRadioButton;
@@ -65,7 +65,7 @@ TransferFunctionEditor1D::setTransferFunction(TransferFunction1D &aTransferFunct
 
 	ui->mTransferFunctionView->setTransferFunction(aTransferFunction);
 
-	mBoundingRect->setRect(rect);
+	//mBoundingRect->setRect(rect);
 	ui->mTransferFunctionView->setSceneRect(rect);
 	ui->mTransferFunctionView->fitInView(rect);
 }
