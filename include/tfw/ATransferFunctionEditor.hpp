@@ -5,6 +5,7 @@
 #include <QWidget>
 
 #include "tfw/data/ATransferFunction.hpp"
+#include "tfw/data/AStatistics.hpp"
 
 namespace tfw {
 
@@ -16,6 +17,9 @@ public:
 	explicit ATransferFunctionEditor(QWidget *parent = nullptr)
 		: QWidget(parent)
 	{}
+
+	virtual void
+	setStatistics(std::shared_ptr<AStatistics> aStatistics) = 0;
 signals:
 	void
 	transferFunctionModified();

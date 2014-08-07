@@ -47,16 +47,22 @@ PaletteWidget::getTransferFunction(int aIndex) const
 
 void PaletteWidget::onItemDoubleClicked(const QModelIndex &index)
 {
-	auto &transfer_function = mModel->palette().get(index.row());
-	auto visitor = CreateEditorVisitor();
-	transfer_function.accept(visitor);
+	int tfId = index.row();
+	auto &transfer_function = mModel->palette().get(tfId);
 
-	QObject::connect(
-		visitor.editor,
-		&ATransferFunctionEditor::transferFunctionModified,
-		[this, index] () {
-			emit transferFunctionModified(index.row());
-		});
+	auto it = mEditors.find(tfId);
+	if (it == end(mEditors)) {
+		auto visitor = CreateEditorVisitor();
+		transfer_function.accept(visitor);
+		mEditors[tfId] = { visitor.editor, visitor.editor };
+		visitor.editor->setStatistics(mStatistics);
+		QObject::connect(
+			visitor.editor,
+			&ATransferFunctionEditor::transferFunctionModified,
+			[this, index] () {
+				emit transferFunctionModified(index.row());
+			});
+	}
 }
 
 } // namespace tfw

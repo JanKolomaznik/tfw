@@ -9,6 +9,8 @@
 
 #include "tfw/TransferFunctionView.hpp"
 #include "tfw/ATransferFunctionEditor.hpp"
+#include "tfw/data/AStatistics.hpp"
+#include "tfw/GraphicsItems.hpp"
 
 namespace Ui {
 class TransferFunctionEditor1D;
@@ -38,7 +40,6 @@ public:
 	{
 		mTransferFunction = &aTransferFunction;
 	}
-
 protected:
 	/*void
 	mouseDoubleClickEvent(QMouseEvent * event) override;*/
@@ -48,6 +49,9 @@ protected:
 		if (mIsDrawing) {
 			TFW_ASSERT(mTransferFunction);
 			QPointF currentPoint = this->mapToScene(event->pos());
+			currentPoint.setX(std::min<float>(mTransferFunction->range().second, std::max<float>(mTransferFunction->range().first, currentPoint.x())));
+			currentPoint.setY(std::min(1.0, std::max(0.0, currentPoint.y())));
+
 			mCurrentCurve->setSegment(currentPoint, mLastPoint);
 			mTransferFunction->setChannelRange(currentPoint.x(), currentPoint.y(), mLastPoint.x(), mLastPoint.y(), mCurrentChannel);
 			mLastPoint = currentPoint;
@@ -61,6 +65,8 @@ protected:
 		if (mCurrentCurve) {
 			mIsDrawing = true;
 			mLastPoint = this->mapToScene(event->pos());
+			mLastPoint.setX(std::min<float>(mTransferFunction->range().second, std::max<float>(mTransferFunction->range().first, mLastPoint.x())));
+			mLastPoint.setY(std::min(1.0, std::max(0.0, mLastPoint.y())));
 		}
 	}
 
@@ -90,6 +96,7 @@ protected:
 
 	QPointF mLastPoint;
 	bool mIsDrawing;
+
 };
 
 typedef FreeHandMouseHandler<TransferFunctionView> FreeHandTransferFunctionView;
@@ -107,6 +114,8 @@ public:
 	void
 	setTransferFunction(TransferFunction1D &aTransferFunction);
 
+	void
+	setStatistics(std::shared_ptr<AStatistics> aStatistics) override;
 private:
 	Ui::TransferFunctionEditor1D *ui;
 	QGraphicsScene mTFScene;
@@ -114,6 +123,9 @@ private:
 
 	std::array<FreeHandCurve, cChannelCount> mCurves;
 	std::array<QRadioButton *, cChannelCount> mRadioButtons;
+	std::shared_ptr<AStatistics> mStatistics;
+
+	Histogram *mHistogram;
 };
 
 } // namespace tfw

@@ -1,5 +1,5 @@
-#include "include/tfw/TransferFunctionEditor1D.hpp"
-#include "ui_TransferFunctionEditor1D.h"
+#include "include/tfw/TransferFunctionEditor2D.hpp"
+#include "ui_TransferFunctionEditor2D.h"
 
 #include <QGraphicsItem>
 #include <QRadioButton>
@@ -7,14 +7,13 @@
 namespace tfw {
 
 
-TransferFunctionEditor1D::TransferFunctionEditor1D(QWidget *parent)
+TransferFunctionEditor2D::TransferFunctionEditor2D(QWidget *parent)
 	: ATransferFunctionEditor(parent)
-	, ui(new Ui::TransferFunctionEditor1D)
-	, mHistogram(nullptr)
+	, ui(new Ui::TransferFunctionEditor2D)
 {
 	ui->setupUi(this);
 
-	QRectF rect = QRectF(0.0, 0.0, 100, 100);
+	/*QRectF rect = QRectF(0.0, 0.0, 100, 100);
 	QPen pen(Qt::black);
 	pen.setWidth(0);
 	pen.setCosmetic(true);
@@ -50,18 +49,18 @@ TransferFunctionEditor1D::TransferFunctionEditor1D(QWidget *parent)
 		ui->mTransferFunctionView,
 		&TransferFunctionView::transferFunctionModified,
 		this,
-		&TransferFunctionEditor1D::transferFunctionModified);
+		&TransferFunctionEditor1D::transferFunctionModified);*/
 }
 
-TransferFunctionEditor1D::~TransferFunctionEditor1D()
+TransferFunctionEditor2D::~TransferFunctionEditor2D()
 {
 	delete ui;
 }
 
 void
-TransferFunctionEditor1D::setTransferFunction(TransferFunction1D &aTransferFunction)
+TransferFunctionEditor2D::setTransferFunction(TransferFunction1D &aTransferFunction)
 {
-	QRectF rect = QRectF(aTransferFunction.range().first, 0.0, aTransferFunction.range().second, 1.0);
+/*	QRectF rect = QRectF(aTransferFunction.range().first, 0.0, aTransferFunction.range().second, 1.0);
 	for (size_t i = 0; i < cChannelCount; ++i) {
 		mCurves[i].setBoundingRect(rect);
 		mCurves[i].clear();
@@ -71,12 +70,13 @@ TransferFunctionEditor1D::setTransferFunction(TransferFunction1D &aTransferFunct
 
 	mBoundingRect->setRect(rect);
 	ui->mTransferFunctionView->setSceneRect(rect);
-	ui->mTransferFunctionView->fitInView(rect);
+	ui->mTransferFunctionView->fitInView(rect);*/
 }
 
-void TransferFunctionEditor1D::setStatistics(std::shared_ptr<AStatistics> aStatistics)
+void
+TransferFunctionEditor2D::setStatistics(std::shared_ptr<AStatistics> aStatistics)
 {
-	if (mHistogram) {
+/*	if (mHistogram) {
 		delete mHistogram;
 	}
 	mStatistics = aStatistics;
@@ -88,7 +88,7 @@ void TransferFunctionEditor1D::setStatistics(std::shared_ptr<AStatistics> aStati
 		mTFScene.addItem(mHistogram);
 		mHistogram->setColor(QColor(200, 100, 200, 150));
 		mHistogram->setSamples(mStatistics->getHistogramSamples());
-	}
+	}*/
 }
 
 } // namespace tfw
