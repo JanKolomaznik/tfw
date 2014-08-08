@@ -53,6 +53,7 @@ protected:
 class TransferFunctionPaletteModel : public QAbstractListModel
 {
 public:
+
 	TransferFunctionPaletteModel()
 		: mPalette(std::make_shared<TransferFunctionPalette>())
 	{}
@@ -111,6 +112,22 @@ public:
 	{
 		return *mPalette;
 	}
+
+	QModelIndex
+	modelIndexFromId(int aTFId) const
+	{
+		return index(aTFId, 0);
+	}
+
+	void
+	add(std::shared_ptr<ATransferFunction> aTransferFunction)
+	{
+
+		beginInsertRows(QModelIndex(), int(mPalette->size()), int(mPalette->size()));
+		mPalette->add(aTransferFunction);
+		endInsertRows();
+	}
+
 protected:
 
 	std::shared_ptr<TransferFunctionPalette> mPalette;

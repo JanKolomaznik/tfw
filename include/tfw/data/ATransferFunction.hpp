@@ -15,6 +15,7 @@ namespace tfw {
 namespace tfw {
 
 class TransferFunction1D;
+class TransferFunction2D;
 
 
 
@@ -26,6 +27,9 @@ public:
 
 	virtual void
 	visit(TransferFunction1D &aTF) = 0;
+
+	virtual void
+	visit(TransferFunction2D &aTF) = 0;
 };
 
 class IConstTransferFunctionVisitor
@@ -36,6 +40,9 @@ public:
 
 	virtual void
 	visit(const TransferFunction1D &) = 0;
+
+	virtual void
+	visit(const TransferFunction2D &) = 0;
 };
 
 
@@ -48,6 +55,12 @@ public:
 	{
 		TFW_THROW(EUnsupportedTransferFunctionType()); // TODO - message
 	}
+
+	void
+	visit(TransferFunction2D &) override
+	{
+		TFW_THROW(EUnsupportedTransferFunctionType()); // TODO - message
+	}
 };
 
 class UnsupportedThrowConstTransferFunctionVisitor : public IConstTransferFunctionVisitor
@@ -55,6 +68,12 @@ class UnsupportedThrowConstTransferFunctionVisitor : public IConstTransferFuncti
 public:
 	void
 	visit(const TransferFunction1D &) override
+	{
+		TFW_THROW(EUnsupportedTransferFunctionType()); // TODO - message
+	}
+
+	void
+	visit(const TransferFunction2D &) override
 	{
 		TFW_THROW(EUnsupportedTransferFunctionType()); // TODO - message
 	}
@@ -73,8 +92,16 @@ public:
 	std::string
 	name() const
 	{
-		return "Dummy";
+		return mName;
 	}
+
+	void
+	setName(std::string aName)
+	{
+		mName = std::move(aName);
+	}
+protected:
+	std::string mName;
 };
 
 
@@ -149,6 +176,7 @@ public:
 	Intensity
 	getIntensity(RangePoint aValue, int aChannel) const
 	{
+		// TODO - other interpolation options
 		const std::vector<Point> &channel = mChannels[aChannel];
 		if (channel.empty()) {
 			return 0;
@@ -179,7 +207,57 @@ public:
 
 protected:
 	std::array<std::vector<Point>, 4> mChannels;
-	std::pair<RangePoint, RangePoint> mRange;
+	Range mRange;
+};
+
+
+class TransferFunction2D : public ATransferFunction
+{
+public:
+	typedef std::array<float, 2> RangePoint;
+	typedef std::array<float, 4> Color;
+	typedef std::vector<RangePoint> Polygon;
+	typedef std::pair<RangePoint, RangePoint> Range;
+
+	TransferFunction2D(RangePoint aFrom = RangePoint{ 0.0, 0.0 }, RangePoint aTo = RangePoint{ 1.0, 1.0 })
+		: mRange(aFrom, aTo)
+	{
+	}
+
+	void
+	accept(ITransferFunctionVisitor &aVisitor) override
+	{
+		aVisitor.visit(*this);
+	}
+
+	void
+	accept(IConstTransferFunctionVisitor &aVisitor) const override
+	{
+		aVisitor.visit(*this);
+	}
+
+	Color
+	getColor(RangePoint aValue) const
+	{
+		// TODO - other interpolation options
+		return Color();
+	}
+
+	const Range &
+	range() const
+	{
+		return mRange;
+	}
+
+	void
+	setRange(Range aRange)
+	{
+		mRange = aRange;
+	}
+
+protected:
+	std::vector<Polygon> mPolygons;
+	Range mRange;
 };
 
 } // namesapce tfw

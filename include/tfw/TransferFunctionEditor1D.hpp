@@ -114,6 +114,15 @@ public:
 	void
 	setTransferFunction(TransferFunction1D &aTransferFunction);
 
+	QString
+	tfName() const override
+	{
+		if (mTransferFunction) {
+			return QString::fromStdString(mTransferFunction->name());
+		}
+		return QString();
+	}
+
 	void
 	setStatistics(std::shared_ptr<AStatistics> aStatistics) override;
 private:
@@ -121,6 +130,7 @@ private:
 	QGraphicsScene mTFScene;
 	QGraphicsRectItem *mBoundingRect;
 
+	TransferFunction1D *mTransferFunction;
 	std::array<FreeHandCurve, cChannelCount> mCurves;
 	std::array<QRadioButton *, cChannelCount> mRadioButtons;
 	std::shared_ptr<AStatistics> mStatistics;

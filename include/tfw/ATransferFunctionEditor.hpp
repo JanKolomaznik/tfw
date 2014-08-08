@@ -18,6 +18,9 @@ public:
 		: QWidget(parent)
 	{}
 
+	virtual QString
+	tfName() const = 0;
+
 	virtual void
 	setStatistics(std::shared_ptr<AStatistics> aStatistics) = 0;
 signals:

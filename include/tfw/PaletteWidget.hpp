@@ -22,8 +22,9 @@ namespace tfw {
 class PaletteWidget : public QWidget
 {
 	Q_OBJECT
-
 public:
+	typedef std::function<QWidget *(tfw::ATransferFunctionEditor *)> WrapEditorCallback;
+
 	explicit PaletteWidget(QWidget *parent = nullptr);
 	~PaletteWidget();
 
@@ -49,9 +50,21 @@ public:
 		}
 	}
 
+	void
+	setWrapEditorCallback(WrapEditorCallback aCallback)
+	{
+		mWrapEditorCallback = std::move(aCallback);
+	}
+
+	void
+	selectTransferFunction(int aTFId);
+
 public slots:
 	void
 	onItemDoubleClicked(const QModelIndex & index);
+
+	void
+	onAddClicked();
 
 signals:
 	void
@@ -73,6 +86,8 @@ private:
 	std::map<int, EditorRecord> mEditors;
 
 	std::shared_ptr<AStatistics> mStatistics;
+
+	WrapEditorCallback mWrapEditorCallback;
 };
 
 } // namespace tfw

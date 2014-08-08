@@ -61,6 +61,7 @@ TransferFunctionEditor1D::~TransferFunctionEditor1D()
 void
 TransferFunctionEditor1D::setTransferFunction(TransferFunction1D &aTransferFunction)
 {
+	mTransferFunction = &aTransferFunction;
 	QRectF rect = QRectF(aTransferFunction.range().first, 0.0, aTransferFunction.range().second, 1.0);
 	for (size_t i = 0; i < cChannelCount; ++i) {
 		mCurves[i].setBoundingRect(rect);

@@ -28,24 +28,28 @@ INCLUDE_DIRECTORIES(
 	)
 
 SET(${PROJECT_NAME}_HEADERS
-	"include/tfw/data/ATransferFunction.hpp"
+	"include/tfw/ATransferFunctionEditor.hpp"
+	"include/tfw/CreateEditorVisitor.hpp"
+	"include/tfw/CreateEditorVisitor.hpp"
 	"include/tfw/data/AStatistics.hpp"
-	"include/tfw/data/TransferFunctionPalette.hpp"
+	"include/tfw/data/ATransferFunction.hpp"
 	"include/tfw/data/TransferFunctionLoading.hpp"
-	"include/tfw/GraphicsItems.hpp"
+	"include/tfw/data/TransferFunctionPalette.hpp"
 	"include/tfw/Exceptions.hpp"
+	"include/tfw/GraphicsItems.hpp"
 	"include/tfw/PaletteWidget.hpp"
+	"include/tfw/ShowTFOptionsVisitor.hpp"
+	"include/tfw/TF1DOptionsDialog.hpp"
 	"include/tfw/TransferFunctionEditor1D.hpp"
 	"include/tfw/TransferFunctionEditor2D.hpp"
 	"include/tfw/TransferFunctionView.hpp"
-	"include/tfw/CreateEditorVisitor.hpp"
-	"include/tfw/ATransferFunctionEditor.hpp"
 	)
 
 SET(${PROJECT_NAME}_SOURCES
 	"src/data/TransferFunctionLoading.cpp"
 	"src/data/TransferFunctionPalette.cpp"
 	"src/PaletteWidget.cpp"
+	"src/TF1DOptionsDialog.cpp"
 	"src/TransferFunctionEditor1D.cpp"
 	"src/TransferFunctionEditor2D.cpp"
 	)
@@ -54,6 +58,7 @@ qt5_wrap_ui(${PROJECT_NAME}_UIS
 	"ui/PaletteWidget.ui"
 	"ui/TransferFunctionEditor1D.ui"
 	"ui/TransferFunctionEditor2D.ui"
+	"ui/TF1DOptionsDialog.ui"
 	)
 
 ADD_LIBRARY(${PROJECT_NAME} STATIC ${${PROJECT_NAME}_SOURCES} ${${PROJECT_NAME}_HEADERS} ${${PROJECT_NAME}_UIS})
