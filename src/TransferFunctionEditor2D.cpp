@@ -3,6 +3,10 @@
 
 #include <QGraphicsItem>
 #include <QRadioButton>
+#include <QToolBar>
+#include <QBoxLayout>
+#include <QAction>
+#include <QActionGroup>
 
 namespace tfw {
 
@@ -10,46 +14,33 @@ namespace tfw {
 TransferFunctionEditor2D::TransferFunctionEditor2D(QWidget *parent)
 	: ATransferFunctionEditor(parent)
 	, ui(new Ui::TransferFunctionEditor2D)
+	, mTransferFunction(nullptr)
 {
 	ui->setupUi(this);
 
-	/*QRectF rect = QRectF(0.0, 0.0, 100, 100);
+	QRectF rect = QRectF(0.0, 0.0, 100, 100);
 	QPen pen(Qt::black);
 	pen.setWidth(0);
 	pen.setCosmetic(true);
 	mBoundingRect = mTFScene.addRect(rect, pen, QBrush(Qt::NoBrush));
 
-	std::array<QColor, cChannelCount> colors = {
-		QColor(255, 0, 0),
-		QColor(0, 255, 0),
-		QColor(0, 0, 255),
-		QColor(255, 255, 255)
-	};
-	mRadioButtons[0] = ui->mRedRadioButton;
-	mRadioButtons[1] = ui->mGreenRadioButton;
-	mRadioButtons[2] = ui->mBlueRadioButton;
-	mRadioButtons[3] = ui->mAlphaRadioButton;
-	for (size_t i = 0; i < cChannelCount; ++i) {
-		mCurves[i].setBoundingRect(rect);
-		mCurves[i].setColor(colors[i]);
-		mTFScene.addItem(&(mCurves[i]));
-		QObject::connect(mRadioButtons[i], &QRadioButton::clicked, [i, this]() {
-			ui->mTransferFunctionView->setEditedCurve(&(mCurves[i]), i);
-		});
-	}
-
-	//mTFScene.addEllipse(0.0, 100, 5, 5);//->setFlag(QGraphicsItem::ItemIgnoresTransformations, true);
-	//mTFScene.addEllipse(100, 100, 5, 5);//->setFlag(QGraphicsItem::ItemIgnoresTransformations, true);
-	//mTFScene.addEllipse(50, 50, 5, 5);//->setFlag(QGraphicsItem::ItemIgnoresTransformations, true);
-	//mTFScene.addEllipse(20, 70, 5, 5);//->setFlag(QGraphicsItem::ItemIgnoresTransformations, true);
-
 	ui->mTransferFunctionView->setScene(&mTFScene);
 
-	QObject::connect(
-		ui->mTransferFunctionView,
-		&TransferFunctionView::transferFunctionModified,
-		this,
-		&TransferFunctionEditor1D::transferFunctionModified);*/
+	QToolBar *toolbar = new QToolBar(this);
+	static_cast<QBoxLayout *>(layout())->insertWidget(0, toolbar);
+
+	auto manipulationModes = new QActionGroup(this);
+	QAction *action = toolbar->addAction(tr("Edit"));
+	action->setCheckable(true);
+	manipulationModes->addAction(action);
+	QObject::connect(action, &QAction::toggled, [this](bool aToggled) { ui->mTransferFunctionView->setIsAdding(!aToggled);});
+
+	action = toolbar->addAction(tr("Rectangle"));
+	action->setCheckable(true);
+	manipulationModes->addAction(action);
+	QObject::connect(action, &QAction::toggled, [this](bool aToggled) { ui->mTransferFunctionView->setIsAdding(aToggled);});
+
+	manipulationModes->setExclusive(true);
 }
 
 TransferFunctionEditor2D::~TransferFunctionEditor2D()
@@ -58,19 +49,22 @@ TransferFunctionEditor2D::~TransferFunctionEditor2D()
 }
 
 void
-TransferFunctionEditor2D::setTransferFunction(TransferFunction1D &aTransferFunction)
+TransferFunctionEditor2D::setTransferFunction(TransferFunction2D &aTransferFunction)
 {
-/*	QRectF rect = QRectF(aTransferFunction.range().first, 0.0, aTransferFunction.range().second, 1.0);
-	for (size_t i = 0; i < cChannelCount; ++i) {
+	mTransferFunction = &aTransferFunction;
+	QRectF rect = QRectF(aTransferFunction.range().first[0], aTransferFunction.range().first[1], aTransferFunction.range().second[0], aTransferFunction.range().second[1]);
+	/*for (size_t i = 0; i < cChannelCount; ++i) {
 		mCurves[i].setBoundingRect(rect);
 		mCurves[i].clear();
 	}
 
-	ui->mTransferFunctionView->setTransferFunction(aTransferFunction);
+	ui->mTransferFunctionView->setTransferFunction(aTransferFunction);*/
 
 	mBoundingRect->setRect(rect);
 	ui->mTransferFunctionView->setSceneRect(rect);
-	ui->mTransferFunctionView->fitInView(rect);*/
+	ui->mTransferFunctionView->fitInView(rect);
+
+	mTFScene.addItem(new EditableRectangle(QRectF(0.2, 0.2, 0.3, 0.4)));
 }
 
 void

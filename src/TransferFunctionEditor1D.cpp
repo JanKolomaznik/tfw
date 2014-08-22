@@ -20,6 +20,8 @@ TransferFunctionEditor1D::TransferFunctionEditor1D(QWidget *parent)
 	pen.setCosmetic(true);
 	mBoundingRect = mTFScene.addRect(rect, pen, QBrush(Qt::NoBrush));
 
+	ui->mTransferFunctionView->setScene(&mTFScene);
+
 	std::array<QColor, cChannelCount> colors = {
 		QColor(255, 0, 0),
 		QColor(0, 255, 0),
@@ -38,13 +40,6 @@ TransferFunctionEditor1D::TransferFunctionEditor1D(QWidget *parent)
 			ui->mTransferFunctionView->setEditedCurve(&(mCurves[i]), i);
 		});
 	}
-
-	//mTFScene.addEllipse(0.0, 100, 5, 5);//->setFlag(QGraphicsItem::ItemIgnoresTransformations, true);
-	//mTFScene.addEllipse(100, 100, 5, 5);//->setFlag(QGraphicsItem::ItemIgnoresTransformations, true);
-	//mTFScene.addEllipse(50, 50, 5, 5);//->setFlag(QGraphicsItem::ItemIgnoresTransformations, true);
-	//mTFScene.addEllipse(20, 70, 5, 5);//->setFlag(QGraphicsItem::ItemIgnoresTransformations, true);
-
-	ui->mTransferFunctionView->setScene(&mTFScene);
 
 	QObject::connect(
 		ui->mTransferFunctionView,

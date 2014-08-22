@@ -5,6 +5,7 @@
 #include <QWidget>
 #include <QGraphicsView>
 #include <QGraphicsItem>
+#include <QScrollBar>
 
 #include <QPointF>
 #include <QWheelEvent>
@@ -21,19 +22,17 @@ public:
 	explicit TransferFunctionView(QWidget *parent = nullptr)
 		: QGraphicsView(parent)
 	{
-		setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
-		setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 		setCacheMode(QGraphicsView::CacheNone);
 		scale(1.0, -1.0);
 
-		//setViewportUpdateMode(ViewportUpdateMode::FullViewportUpdate);
+		setViewportUpdateMode(ViewportUpdateMode::FullViewportUpdate);
 	}
 
 public slots :
 	void
-	zoom(float aZoomFactor)
+	zoom(float aZoomFactorX, float aZoomFactorY = 1.0f)
 	{
-		scale(aZoomFactor, 1.0);
+		scale(aZoomFactorX, aZoomFactorY);
 	}
 signals:
 	void
@@ -46,38 +45,26 @@ protected:
 		fitInView(sceneRect());
 	}
 
-	/*void
-	wheelEvent(QWheelEvent *event) override
-	{
-		QPoint numDegrees = event->angleDelta() / 8;
-
-		if (numDegrees.y() > 0) {
-			zoom(1.2);
-		} else {
-			zoom(1.0 / 1.2);
-		}
-		event->accept();
-	}*/
-
-	QRectF
-	currentView(int aWidth, int aHeight) const
-	{
-		auto srect = sceneRect();
-		auto p1 = mapToScene(2, 1);
-		auto p2 = mapToScene(aWidth, aHeight);
-		p1.setY(srect.top());
-		p2.setY(srect.bottom());
-
-		return QRectF(p1, p2);
-	}
-
 	void
 	resizeEvent(QResizeEvent *event) override
 	{
-		QRectF rect = currentView(event->oldSize().width(), event->oldSize().height());
+		QRect oldView(0, 0, event->oldSize().width(), event->oldSize().height());
+		QRectF currentView = mapToScene(oldView).boundingRect();
+		if (currentView.isNull()) {
+			currentView = sceneRect();
+		}
+		//auto horizontalScroll = horizontalScrollBar()->value();
+		//auto verticalScroll = verticalScrollBar()->value();
+		//QPointF center = mapToScene(oldView.center());
+		if (currentView.isValid()) {
+			double sx = event->size().width() / currentView.width();
+			double sy = event->size().height() / currentView.height();
+			setTransform(QTransform::fromScale(sx, -sy));
+			/*horizontalScrollBar()->setValue(horizontalScroll);
+			verticalScrollBar()->setValue(verticalScroll);*/
+		}
 		QGraphicsView::resizeEvent(event);
-		fitInView(rect);
-		update();
+		centerOn(currentView.center());
 	}
 
 
@@ -102,6 +89,14 @@ protected:
 	void
 	drawBackground(QPainter * painter, const QRectF & rect) override
 	{
+		static const int cTextMargin = 2;
+		static const int cTextSize = 10;
+		static const int cLineDistance = 60;
+		QFont font = painter->font();
+		font.setPointSize(8);
+		painter->setFont(font);
+		const QFontMetrics &metrics = painter->fontMetrics();
+
 		painter->fillRect(rect, Qt::lightGray);
 
 		QPen gridPen(Qt::black);
@@ -110,22 +105,44 @@ protected:
 		gridPen.setCosmetic(true);
 		painter->setPen(gridPen);
 
-		QRectF visible = currentView(width(), height());
+		QRectF visible = mapToScene(viewport()->rect()).boundingRect();
 
-		double hSections = width() / 30.0;
-		double vSections = height() / 30.0;
+		double hSections = double(width()) / cLineDistance;
+		double vSections = double(height()) / cLineDistance;
 		double hStep = getGridStep(visible.width(), hSections);
 		double vStep = getGridStep(visible.height(), vSections);
-		for (double x = std::ceil(rect.left() / hStep) * hStep; x <= rect.right(); x += hStep) {
-			painter->drawLine(x, rect.bottom(), x, rect.top());
+
+		double fromX = std::max(rect.left(), sceneRect().left());
+		double toX = std::min(sceneRect().right(), rect.right());
+		double startX = std::ceil(fromX / hStep) * hStep;
+
+		double fromY = std::max(rect.top(), sceneRect().top());
+		double toY = std::min(sceneRect().bottom(), rect.bottom());
+		double startY = std::ceil(fromY / vStep) * vStep;
+		for (double x = startX; x <= toX; x += hStep) {
+			painter->drawLine(QPointF(x, fromY), QPointF(x, toY));
+
+			painter->setWorldMatrixEnabled(false);
+				QPoint textAnchor = mapFromScene(x, fromY);
+				QString text = QString::number(x, 'g', 4);
+				QRect textRect(textAnchor.x() - cLineDistance / 2, textAnchor.y() - cTextMargin - cTextSize, cLineDistance, cTextSize);
+				textRect = metrics.boundingRect(textRect, Qt::AlignCenter | Qt::AlignBottom, text);
+				painter->fillRect(textRect, Qt::lightGray);
+				painter->drawText(textRect, Qt::AlignCenter | Qt::AlignBottom, text);
+			painter->setWorldMatrixEnabled(true);
 		}
 
-		for (double y = std::ceil(rect.top() / vStep) * vStep; y <= rect.bottom(); y += vStep) {
-			//auto p1 = rect.left();
-			//auto p2 = rect.right();
+		for (double y = startY; y <= toY; y += vStep) {
+			painter->drawLine(QPointF(fromX, y), QPointF(toX, y));
 
-			//painter->drawLine(rect.left(), y, rect.right(), y);
-			painter->drawLine(QPointF(rect.right(), y), QPointF(rect.left(), y));
+			painter->setWorldMatrixEnabled(false);
+				QPoint textAnchor = mapFromScene(fromX, y);
+				QString text = QString::number(y, 'g', 4);
+				QRect textRect(textAnchor.x() +cTextMargin, textAnchor.y() - cTextSize / 2, cLineDistance, cTextSize);
+				textRect = metrics.boundingRect(textRect, Qt::AlignLeft | Qt::AlignVCenter, text);
+				painter->fillRect(textRect, Qt::lightGray);
+				painter->drawText(textRect, Qt::AlignCenter | Qt::AlignBottom, text);
+			painter->setWorldMatrixEnabled(true);
 		}
 	}
 private:

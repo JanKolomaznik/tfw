@@ -19,6 +19,33 @@ class TransferFunctionEditor1D;
 namespace tfw {
 
 template <typename TGraphicsView>
+class TransferFunction1DZoomHandler : public TGraphicsView
+{
+public:
+	TransferFunction1DZoomHandler(QWidget *parent = nullptr)
+		: TGraphicsView(parent)
+	{
+		this->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+		this->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+	}
+protected:
+	void
+	wheelEvent(QWheelEvent * event) override
+	{
+		QPoint numDegrees = event->angleDelta() / 8;
+
+		if (numDegrees.y() > 0) {
+			this->zoom(1.2);
+		} else {
+			this->zoom(1.0 / 1.2);
+		}
+		event->accept();
+	}
+};
+
+
+
+template <typename TGraphicsView>
 class FreeHandMouseHandler : public TGraphicsView
 {
 public:
@@ -76,19 +103,6 @@ protected:
 		mIsDrawing = false;
 	}
 
-	void
-	wheelEvent(QWheelEvent * event) override
-	{
-		QPoint numDegrees = event->angleDelta() / 8;
-
-		if (numDegrees.y() > 0) {
-			this->zoom(1.2);
-		} else {
-			this->zoom(1.0 / 1.2);
-		}
-		event->accept();
-	}
-
 	TransferFunction1D *mTransferFunction;
 
 	FreeHandCurve *mCurrentCurve;
@@ -99,7 +113,7 @@ protected:
 
 };
 
-typedef FreeHandMouseHandler<TransferFunctionView> FreeHandTransferFunctionView;
+typedef FreeHandMouseHandler<TransferFunction1DZoomHandler<TransferFunctionView>> FreeHandTransferFunctionView;
 
 
 class TransferFunctionEditor1D : public ATransferFunctionEditor

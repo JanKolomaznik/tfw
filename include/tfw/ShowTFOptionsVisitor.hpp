@@ -3,6 +3,7 @@
 #include "tfw/data/ATransferFunction.hpp"
 
 #include "tfw/TF1DOptionsDialog.hpp"
+#include "tfw/TF2DOptionsDialog.hpp"
 
 #include <QApplication>
 
@@ -15,10 +16,24 @@ public:
 		: succeeded(false)
 	{}
 
-	virtual void
+	void
 	visit(TransferFunction1D &aTransferFunction) override
 	{
 		TF1DOptionsDialog dialog;
+		dialog.setTFName(aTransferFunction.name());
+		dialog.setRange(aTransferFunction.range());
+
+		succeeded = dialog.exec() == QDialog::Accepted;
+		if (succeeded) {
+			aTransferFunction.setName(dialog.tfName());
+			aTransferFunction.setRange(dialog.range());
+		}
+	}
+
+	void
+	visit(TransferFunction2D &aTransferFunction) override
+	{
+		TF2DOptionsDialog dialog;
 		dialog.setTFName(aTransferFunction.name());
 		dialog.setRange(aTransferFunction.range());
 

@@ -40,6 +40,7 @@ SET(${PROJECT_NAME}_HEADERS
 	"include/tfw/PaletteWidget.hpp"
 	"include/tfw/ShowTFOptionsVisitor.hpp"
 	"include/tfw/TF1DOptionsDialog.hpp"
+	"include/tfw/TF2DOptionsDialog.hpp"
 	"include/tfw/TransferFunctionEditor1D.hpp"
 	"include/tfw/TransferFunctionEditor2D.hpp"
 	"include/tfw/TransferFunctionView.hpp"
@@ -50,6 +51,8 @@ SET(${PROJECT_NAME}_SOURCES
 	"src/data/TransferFunctionPalette.cpp"
 	"src/PaletteWidget.cpp"
 	"src/TF1DOptionsDialog.cpp"
+	"src/TF2DOptionsDialog.cpp"
+	"src/GraphicsItems.cpp"
 	"src/TransferFunctionEditor1D.cpp"
 	"src/TransferFunctionEditor2D.cpp"
 	)
@@ -59,6 +62,7 @@ qt5_wrap_ui(${PROJECT_NAME}_UIS
 	"ui/TransferFunctionEditor1D.ui"
 	"ui/TransferFunctionEditor2D.ui"
 	"ui/TF1DOptionsDialog.ui"
+	"ui/TF2DOptionsDialog.ui"
 	)
 
 ADD_LIBRARY(${PROJECT_NAME} STATIC ${${PROJECT_NAME}_SOURCES} ${${PROJECT_NAME}_HEADERS} ${${PROJECT_NAME}_UIS})
