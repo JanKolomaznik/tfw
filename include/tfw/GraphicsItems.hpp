@@ -14,6 +14,42 @@
 
 namespace tfw {
 
+inline QColor
+interpolate(const QColor &aC1, const QColor &aC2, double aAlpha)
+{
+	return QColor::fromRgbF(
+			aAlpha * aC2.redF() + (1.0 - aAlpha) * aC1.redF(),
+			aAlpha * aC2.greenF() + (1.0 - aAlpha) * aC1.greenF(),
+			aAlpha * aC2.blueF() + (1.0 - aAlpha) * aC1.blueF(),
+			aAlpha * aC2.alphaF() + (1.0 - aAlpha) * aC1.alphaF());
+}
+
+inline QColor
+heatColorRamp(double aValue)
+{
+	static const std::vector<QColor> cColors {
+		QColor(0, 128, 128, 0),
+		QColor(0, 255, 255, 140),
+		QColor(0, 128, 255, 200),
+		QColor(0, 255, 0, 230),
+		QColor(255, 255, 0, 230),
+		QColor(255, 0, 0, 230)
+	};
+	static const double cStep = 1.0 / (cColors.size() - 1);
+	if (aValue <= 0.0) {
+		return cColors.front();
+	}
+	if (aValue >= 1.0) {
+		return cColors.back();
+	}
+
+	int segment = std::floor(aValue / cStep);
+	const QColor &c1 = cColors[segment];
+	const QColor &c2 = cColors[segment + 1];
+	double alpha = (aValue - segment * cStep) / cStep;
+	return interpolate(c1, c2, alpha);
+}
+
 class FreeHandCurve : public QGraphicsItem
 {
 public:
@@ -121,6 +157,93 @@ protected:
 	QRectF mBoundingBox;
 	std::vector<QPointF> mSamples;
 	QColor mColor;
+};
+
+class ScatterPlot : public QGraphicsItem
+{
+public:
+	ScatterPlot(QRectF aRegion, ScatterPlotData aData, double aScaleFactor, QGraphicsItem * parent = nullptr)
+		: QGraphicsItem(parent)
+		, mUseLogScale(false)
+	{
+		setData(aRegion, std::move(aData));
+		setScaleFactor(aScaleFactor);
+	}
+
+	QRectF
+	boundingRect() const override
+	{
+		return mBoundingBox;
+	}
+
+	void
+	setData(QRectF aRegion, ScatterPlotData aData)
+	{
+		mBoundingBox = aRegion;
+		mData = std::move(aData);
+	}
+
+	void
+	paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override
+	{
+		QImage image(mData.size[0], mData.size[1], QImage::Format_ARGB32);
+
+		/*computeImage(
+			image,
+			[this](double &aValue) {
+				int val = std::min<int>(250, log(double(aValue) * mScaleFactor + 1));
+				return (val << 24) + (val << 16) + val;
+			});*/
+
+		if (mUseLogScale) {
+			computeImage(
+				image,
+				[this](const double &aValue) -> int{
+					return heatColorRamp(0.00000001 * log(1 + 100000000*aValue) * mScaleFactor).rgba();
+				});
+		} else {
+			computeImage(
+				image,
+				[this](const double &aValue) -> int{
+					return heatColorRamp(aValue * mScaleFactor).rgba();
+				});
+		}
+
+		painter->drawImage(mBoundingBox, image);
+	}
+
+	void
+	setScaleFactor(double aScaleFactor)
+	{
+		mScaleFactor = aScaleFactor;
+		update();
+	}
+
+	void
+	enableLogScale(bool aEnable)
+	{
+		mUseLogScale = aEnable;
+		update();
+	}
+
+protected:
+
+	template <typename TOperator>
+	void
+	computeImage(QImage &aImage, TOperator aOperator) const
+	{
+		for (int j = 0; j < mData.size[1]; ++j) {
+			for (int i = 0; i < mData.size[0]; ++i) {
+				aImage.setPixel(i, j, aOperator(mData.buffer[i + j*mData.size[0]]));
+			}
+		}
+	}
+
+	QRectF mBoundingBox;
+	ScatterPlotData mData;
+	double mScaleFactor;
+
+	bool mUseLogScale;
 };
 
 
@@ -295,10 +418,6 @@ protected:
 		if (!mAcceptsManipulation) {
 			return;
 		}
-		auto a0 = mManipulators[0]->pos();
-		auto a1 = mManipulators[1]->pos();
-		auto a2 = mManipulators[2]->pos();
-		auto a3 = mManipulators[3]->pos();
 		mAcceptsManipulation = false;
 		switch (aManipulatorIndex) {
 		case 0:
@@ -321,10 +440,6 @@ protected:
 			TFW_ASSERT(false);
 			break;
 		}
-		auto b0 = mManipulators[0]->pos();
-		auto b1 = mManipulators[1]->pos();
-		auto b2 = mManipulators[2]->pos();
-		auto b3 = mManipulators[3]->pos();
 		auto minmaxX = std::minmax({ mManipulators[0]->x(), mManipulators[1]->x() });
 		auto minmaxY = std::minmax({ mManipulators[0]->y(), mManipulators[2]->y() });
 		mRectangle.setLeft(minmaxX.first);

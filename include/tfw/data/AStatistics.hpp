@@ -9,6 +9,12 @@
 
 namespace tfw {
 
+struct ScatterPlotData
+{
+	std::array<int, 2> size;
+	std::vector<float> buffer;
+};
+
 class AStatistics
 {
 public:
@@ -20,6 +26,13 @@ public:
 
 	virtual std::vector<QPointF>
 	getHistogramSamples() const = 0;
+
+	virtual bool
+	hasScatterPlot() const = 0;
+
+	virtual std::pair<QRectF, ScatterPlotData>
+	getScatterPlot() const = 0;
+
 };
 
 } // namespace tfw

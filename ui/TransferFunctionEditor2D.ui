@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>414</width>
-    <height>215</height>
+    <width>471</width>
+    <height>283</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -15,13 +15,81 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <widget class="tfw::TransferFunction2DView" name="mTransferFunctionView">
-     <property name="minimumSize">
-      <size>
-       <width>100</width>
-       <height>100</height>
-      </size>
+    <widget class="QSplitter" name="splitter">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
      </property>
+     <widget class="tfw::TransferFunction2DView" name="mTransferFunctionView">
+      <property name="minimumSize">
+       <size>
+        <width>100</width>
+        <height>100</height>
+       </size>
+      </property>
+     </widget>
+     <widget class="QToolBox" name="toolBox">
+      <property name="currentIndex">
+       <number>0</number>
+      </property>
+      <widget class="QWidget" name="page">
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>0</y>
+         <width>125</width>
+         <height>243</height>
+        </rect>
+       </property>
+       <attribute name="label">
+        <string>Scatter Plot</string>
+       </attribute>
+       <layout class="QVBoxLayout" name="verticalLayout_2">
+        <item>
+         <widget class="QCheckBox" name="mLogScaleCheckBox">
+          <property name="text">
+           <string>Log scale</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="label">
+          <property name="text">
+           <string>Scale factor</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QSlider" name="mScatterPlotContrastSlider">
+          <property name="minimum">
+           <number>-1000</number>
+          </property>
+          <property name="maximum">
+           <number>10000</number>
+          </property>
+          <property name="value">
+           <number>100</number>
+          </property>
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="verticalSpacer">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>40</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </widget>
+     </widget>
     </widget>
    </item>
   </layout>
@@ -34,5 +102,41 @@
   </customwidget>
  </customwidgets>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>mScatterPlotContrastSlider</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>TransferFunctionEditor2D</receiver>
+   <slot>updateScatterPlotSettings()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>456</x>
+     <y>96</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>469</x>
+     <y>30</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>mLogScaleCheckBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>TransferFunctionEditor2D</receiver>
+   <slot>updateScatterPlotSettings()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>384</x>
+     <y>48</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>469</x>
+     <y>2</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>updateScatterPlotSettings()</slot>
+ </slots>
 </ui>

@@ -129,6 +129,12 @@ public:
 		}
 		return QString();
 	}
+
+	double scatterPlotScaleFactor() const;
+
+public slots:
+	void
+	updateScatterPlotSettings();
 private:
 	Ui::TransferFunctionEditor2D *ui;
 	QGraphicsScene mTFScene;
@@ -137,6 +143,7 @@ private:
 	TransferFunction2D *mTransferFunction;
 
 	std::shared_ptr<AStatistics> mStatistics;
+	ScatterPlot *mScatterPlot;
 };
 
 } // namespace tfw

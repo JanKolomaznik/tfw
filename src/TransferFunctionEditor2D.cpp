@@ -15,6 +15,7 @@ TransferFunctionEditor2D::TransferFunctionEditor2D(QWidget *parent)
 	: ATransferFunctionEditor(parent)
 	, ui(new Ui::TransferFunctionEditor2D)
 	, mTransferFunction(nullptr)
+	, mScatterPlot(nullptr)
 {
 	ui->setupUi(this);
 
@@ -70,19 +71,30 @@ TransferFunctionEditor2D::setTransferFunction(TransferFunction2D &aTransferFunct
 void
 TransferFunctionEditor2D::setStatistics(std::shared_ptr<AStatistics> aStatistics)
 {
-/*	if (mHistogram) {
-		delete mHistogram;
+	if (mScatterPlot) {
+		delete mScatterPlot;
 	}
 	mStatistics = aStatistics;
 
 	if (mStatistics) {
-		auto range = mStatistics->getHistogramRange();
+		auto data = mStatistics->getScatterPlot();
+		mScatterPlot = new ScatterPlot(data.first, std::move(data.second), scatterPlotScaleFactor());
+		mTFScene.addItem(mScatterPlot);
+		updateScatterPlotSettings();
+	}
+}
 
-		mHistogram = new Histogram(QRectF(range.first, 0.0, range.second - range.first, 1.0));
-		mTFScene.addItem(mHistogram);
-		mHistogram->setColor(QColor(200, 100, 200, 150));
-		mHistogram->setSamples(mStatistics->getHistogramSamples());
-	}*/
+double TransferFunctionEditor2D::scatterPlotScaleFactor() const
+{
+	return pow(10.0, double(ui->mScatterPlotContrastSlider->value()) / 1000);
+}
+
+void TransferFunctionEditor2D::updateScatterPlotSettings()
+{
+	if (mScatterPlot) {
+		mScatterPlot->enableLogScale(ui->mLogScaleCheckBox->checkState() == Qt::Checked);
+		mScatterPlot->setScaleFactor(scatterPlotScaleFactor());
+	}
 }
 
 } // namespace tfw

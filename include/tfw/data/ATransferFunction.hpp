@@ -214,6 +214,7 @@ protected:
 class TransferFunction2D : public ATransferFunction
 {
 public:
+	typedef float FloatingPoint;
 	typedef std::array<float, 2> RangePoint;
 	typedef std::array<float, 4> Color;
 	typedef std::vector<RangePoint> Polygon;
@@ -238,6 +239,13 @@ public:
 
 	Color
 	getColor(RangePoint aValue) const
+	{
+		// TODO - other interpolation options
+		return Color();
+	}
+
+	Color
+	getColor(FloatingPoint aXValue, FloatingPoint aYValue) const
 	{
 		// TODO - other interpolation options
 		return Color();
