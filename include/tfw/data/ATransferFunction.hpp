@@ -7,6 +7,8 @@
 
 #include "tfw/Exceptions.hpp"
 
+#include <boost/multi_array.hpp>
+
 namespace tfw {
 
 
@@ -240,15 +242,13 @@ public:
 	Color
 	getColor(RangePoint aValue) const
 	{
-		// TODO - other interpolation options
-		return Color();
+		return getColor(aValue[0], aValue[1]);
 	}
 
 	Color
 	getColor(FloatingPoint aXValue, FloatingPoint aYValue) const
 	{
-		// TODO - other interpolation options
-		return Color();
+		return mBuffer[int(aXValue)][int(aYValue)]; //TODO
 	}
 
 	const Range &
@@ -261,10 +261,24 @@ public:
 	setRange(Range aRange)
 	{
 		mRange = aRange;
+		std::array<int, 2> newExtents = {{int(aRange.second[0] - aRange.first[0]), int(aRange.second[1] - aRange.first[1])}};
+		mBuffer.resize(newExtents); //TODO
+	}
+
+
+	void
+	setColor(FloatingPoint aXValue, FloatingPoint aYValue, Color aColor)
+	{
+		mBuffer[int(aXValue)][int(aYValue)] = aColor; //TODO
 	}
 
 protected:
-	std::vector<Polygon> mPolygons;
+	typedef boost::multi_array<Color, 2> Buffer;
+
+	Buffer mBuffer;
+	//std::vector<Polygon> mPolygons;
+	//std::vector<std::pair<Range, Color>> mPolygons;
+
 	Range mRange;
 };
 
