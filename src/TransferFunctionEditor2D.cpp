@@ -42,6 +42,9 @@ TransferFunctionEditor2D::TransferFunctionEditor2D(QWidget *parent)
 	QObject::connect(action, &QAction::toggled, [this](bool aToggled) { ui->mTransferFunctionView->setIsAdding(aToggled);});
 
 	manipulationModes->setExclusive(true);
+
+
+	QObject::connect(ui->mBakeButton, &QPushButton::clicked, this, &TransferFunctionEditor2D::fillTransferFunction);
 }
 
 TransferFunctionEditor2D::~TransferFunctionEditor2D()
@@ -64,8 +67,6 @@ TransferFunctionEditor2D::setTransferFunction(TransferFunction2D &aTransferFunct
 	mBoundingRect->setRect(rect);
 	ui->mTransferFunctionView->setSceneRect(rect);
 	ui->mTransferFunctionView->fitInView(rect);
-
-	mTFScene.addItem(new EditableRectangle(QRectF(0.2, 0.2, 0.3, 0.4)));
 }
 
 void
@@ -95,6 +96,21 @@ void TransferFunctionEditor2D::updateScatterPlotSettings()
 		mScatterPlot->enableLogScale(ui->mLogScaleCheckBox->checkState() == Qt::Checked);
 		mScatterPlot->setScaleFactor(scatterPlotScaleFactor());
 	}
+}
+
+void TransferFunctionEditor2D::fillTransferFunction()
+{
+	mTransferFunction->reset();
+	auto items = mTFScene.items();
+	for (auto item : items) {
+		EditableRectangle *rectangle = qgraphicsitem_cast<EditableRectangle *>(item);
+		if (rectangle) {
+
+		}
+	}
+
+
+	emit transferFunctionModified();
 }
 
 } // namespace tfw

@@ -356,6 +356,10 @@ protected:
 class EditableRectangle : public AEditablePrimitive
 {
 public:
+	// qgraphicsitem_cast uses this
+	enum { Type = UserType + 100 };
+	int type() const override { return Type; }
+
 	EditableRectangle(QRectF aRect, QGraphicsItem * parent = nullptr)
 		: AEditablePrimitive(parent)
 		, mRectangle(aRect)

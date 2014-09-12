@@ -135,6 +135,9 @@ public:
 public slots:
 	void
 	updateScatterPlotSettings();
+
+	void
+	fillTransferFunction();
 private:
 	Ui::TransferFunctionEditor2D *ui;
 	QGraphicsScene mTFScene;

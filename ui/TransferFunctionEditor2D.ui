@@ -36,8 +36,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>125</width>
-         <height>243</height>
+         <width>127</width>
+         <height>240</height>
         </rect>
        </property>
        <attribute name="label">
@@ -71,6 +71,13 @@
           </property>
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="mBakeButton">
+          <property name="text">
+           <string>Bake</string>
           </property>
          </widget>
         </item>
@@ -110,8 +117,8 @@
    <slot>updateScatterPlotSettings()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>456</x>
-     <y>96</y>
+     <x>454</x>
+     <y>101</y>
     </hint>
     <hint type="destinationlabel">
      <x>469</x>
