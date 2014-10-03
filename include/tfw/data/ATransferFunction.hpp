@@ -248,8 +248,8 @@ public:
 	Color
 	getColor(FloatingPoint aXValue, FloatingPoint aYValue) const
 	{
-		return Color{ 0.0f, 0.5f, 1.0f, 0.5f };
-		//return mBuffer[int(aXValue)][int(aYValue)]; //TODO
+		//return Color{ 0.0f, 0.5f, 1.0f, 0.5f };
+		return mBuffer[int(aXValue)][int(aYValue)]; //TODO
 	}
 
 	const Range &
@@ -274,8 +274,28 @@ public:
 	}
 
 	void
+	setColor(RangePoint aFrom, RangePoint aTo, Color aColor)
+	{
+		int xFrom = std::floor(aFrom[0]);
+		int yFrom = std::floor(aFrom[1]);
+		int xTo = std::ceil(aTo[0]);
+		int yTo = std::ceil(aTo[1]);
+		for (int j = yFrom; j <= yTo; ++j) {
+			for (int i = xFrom; i <= xTo; ++i) {
+				mBuffer[i][j] = aColor;
+			}
+		}
+		//TODO
+	}
+
+	void
 	reset() {
-		//std::fill(mBuffer , end(mBuffer) , Color {0.0, 0.0, 0.0, 0.0});
+		std::fill(mBuffer.origin() , mBuffer.origin() + mBuffer.size(), Color {0.0, 0.0, 0.0, 0.0});
+		for (int j = 0; j < mBuffer.shape()[1]; ++j) {
+			for (int i = 0; i < mBuffer.shape()[0]; ++i) {
+				mBuffer[i][j] = Color {0.0, 0.0, 0.0, 0.0};
+			}
+		}
 	}
 
 protected:

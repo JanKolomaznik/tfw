@@ -105,7 +105,13 @@ void TransferFunctionEditor2D::fillTransferFunction()
 	for (auto item : items) {
 		EditableRectangle *rectangle = qgraphicsitem_cast<EditableRectangle *>(item);
 		if (rectangle) {
-
+			auto r = rectangle->boundingRect();
+			auto topLeft = rectangle->pos() + r.topLeft();
+			auto bottomRight = rectangle->pos() + r.bottomRight();
+			mTransferFunction->setColor(
+				TransferFunction2D::RangePoint{ topLeft.x(), topLeft.y() },
+				TransferFunction2D::RangePoint{ bottomRight.x(), bottomRight.y() },
+				TransferFunction2D::Color{ 0.0, 0.7, 0.8, 0.5 });
 		}
 	}
 

@@ -422,7 +422,7 @@ protected:
 		if (!mAcceptsManipulation) {
 			return;
 		}
-		mAcceptsManipulation = false;
+		mAcceptsManipulation = false; //TODO RAII
 		switch (aManipulatorIndex) {
 		case 0:
 			mManipulators[1]->setY(mManipulators[aManipulatorIndex]->y());
@@ -446,6 +446,7 @@ protected:
 		}
 		auto minmaxX = std::minmax({ mManipulators[0]->x(), mManipulators[1]->x() });
 		auto minmaxY = std::minmax({ mManipulators[0]->y(), mManipulators[2]->y() });
+		prepareGeometryChange();
 		mRectangle.setLeft(minmaxX.first);
 		mRectangle.setRight(minmaxX.second);
 		mRectangle.setTop(minmaxY.first);
