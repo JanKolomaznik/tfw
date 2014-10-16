@@ -17,7 +17,8 @@ TF1DOptionsDialog::~TF1DOptionsDialog()
 
 std::string
 TF1DOptionsDialog::tfName() const {
-	return mUi->mNameLineEdit->text().toStdString();
+  std::string* retval = new std::string(mUi->mNameLineEdit->text().toStdString()); // temoprary memory leak - destructor is causing problems
+  return *retval;
 }
 
 void TF1DOptionsDialog::setTFName(const std::string &aName)
