@@ -291,8 +291,8 @@ public:
 	void
 	reset() {
 		std::fill(mBuffer.origin() , mBuffer.origin() + mBuffer.size(), Color {0.0, 0.0, 0.0, 0.0});
-		for (int j = 0; j < mBuffer.shape()[1]; ++j) {
-			for (int i = 0; i < mBuffer.shape()[0]; ++i) {
+		for (int j = 0; j < int(mBuffer.shape()[1]); ++j) {
+			for (int i = 0; i < int(mBuffer.shape()[0]); ++i) {
 				mBuffer[i][j] = Color {0.0, 0.0, 0.0, 0.0};
 			}
 		}

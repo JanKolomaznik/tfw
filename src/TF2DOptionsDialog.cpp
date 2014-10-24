@@ -37,8 +37,8 @@ TransferFunction2D::Range
 TF2DOptionsDialog::range() const
 {
 	return TransferFunction2D::Range(
-		TransferFunction2D::RangePoint{mUi->mRangeXFromDoubleSpinBox->value(), mUi->mRangeYFromDoubleSpinBox->value()},
-		TransferFunction2D::RangePoint{mUi->mRangeXToDoubleSpinBox->value(), mUi->mRangeYToDoubleSpinBox->value()});
+		TransferFunction2D::RangePoint{float(mUi->mRangeXFromDoubleSpinBox->value()), float(mUi->mRangeYFromDoubleSpinBox->value())},
+		TransferFunction2D::RangePoint{float(mUi->mRangeXToDoubleSpinBox->value()), float(mUi->mRangeYToDoubleSpinBox->value())});
 }
 
 } // namespace tfw
