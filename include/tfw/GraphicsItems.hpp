@@ -99,6 +99,14 @@ public:
 	}
 
 	void
+	appendPoint(QPointF aPoint)
+	{
+		//TODO - prevent misuse
+		mPoints.push_back(aPoint);
+		update();
+	}
+
+	void
 	clear()
 	{
 		mPoints.clear();

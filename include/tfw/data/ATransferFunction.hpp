@@ -207,6 +207,18 @@ public:
 		mRange = aRange;
 	}
 
+	std::vector<Point>::const_iterator
+	channelBegin(int aChannel) const
+	{
+		return mChannels[aChannel].begin();
+	}
+
+	std::vector<Point>::const_iterator
+	channelEnd(int aChannel) const
+	{
+		return mChannels[aChannel].end();
+	}
+
 protected:
 	std::array<std::vector<Point>, 4> mChannels;
 	Range mRange;

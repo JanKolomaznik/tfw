@@ -61,7 +61,13 @@ TransferFunctionEditor1D::setTransferFunction(TransferFunction1D &aTransferFunct
 	for (size_t i = 0; i < cChannelCount; ++i) {
 		mCurves[i].setBoundingRect(rect);
 		mCurves[i].clear();
+
+		for (auto it = mTransferFunction->channelBegin(i); it != mTransferFunction->channelEnd(i); ++it) {
+			mCurves[i].appendPoint(QPointF(it->first, it->second));
+		}
 	}
+
+
 
 	ui->mTransferFunctionView->setTransferFunction(aTransferFunction);
 
