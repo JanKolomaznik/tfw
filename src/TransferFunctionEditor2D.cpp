@@ -77,7 +77,7 @@ TransferFunctionEditor2D::setStatistics(std::shared_ptr<AStatistics> aStatistics
 	}
 	mStatistics = aStatistics;
 
-	if (mStatistics) {
+	if (mStatistics && mStatistics->hasScatterPlot()) {
 		auto data = mStatistics->getScatterPlot();
 		mScatterPlot = new ScatterPlot(data.first, std::move(data.second), scatterPlotScaleFactor());
 		mTFScene.addItem(mScatterPlot);
@@ -109,8 +109,8 @@ void TransferFunctionEditor2D::fillTransferFunction()
 			auto topLeft = rectangle->pos() + r.topLeft();
 			auto bottomRight = rectangle->pos() + r.bottomRight();
 			mTransferFunction->setColor(
-				TransferFunction2D::RangePoint{ topLeft.x(), topLeft.y() },
-				TransferFunction2D::RangePoint{ bottomRight.x(), bottomRight.y() },
+				TransferFunction2D::RangePoint{ float(topLeft.x()), float(topLeft.y()) },
+				TransferFunction2D::RangePoint{ float(bottomRight.x()), float(bottomRight.y()) },
 				TransferFunction2D::Color{ 0.0, 0.7, 0.8, 0.5 });
 		}
 	}

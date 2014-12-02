@@ -229,13 +229,18 @@ class TransferFunction2D : public ATransferFunction
 {
 public:
 	typedef float FloatingPoint;
+	typedef std::array<float, 2> SampleRate;
 	typedef std::array<float, 2> RangePoint;
 	typedef std::array<float, 4> Color;
 	typedef std::vector<RangePoint> Polygon;
 	typedef std::pair<RangePoint, RangePoint> Range;
 
-	TransferFunction2D(RangePoint aFrom = RangePoint{ 0.0, 0.0 }, RangePoint aTo = RangePoint{ 1.0, 1.0 })
+	TransferFunction2D(
+			RangePoint aFrom = RangePoint{ 0.0, 0.0 },
+			RangePoint aTo = RangePoint{ 1.0, 1.0 },
+			SampleRate aSampleRate = { 1.0, 1.0})
 		: mRange(aFrom, aTo)
+		, mSampleRate(aSampleRate)
 	{
 	}
 
@@ -274,7 +279,10 @@ public:
 	setRange(Range aRange)
 	{
 		mRange = aRange;
-		std::array<int, 2> newExtents = {{int(aRange.second[0] - aRange.first[0]), int(aRange.second[1] - aRange.first[1])}};
+		std::array<int, 2> newExtents = {{
+			int(mSampleRate[0] * (aRange.second[0] - aRange.first[0])),
+			int(mSampleRate[1] * (aRange.second[1] - aRange.first[1]))
+			}};
 		mBuffer.resize(newExtents); //TODO
 	}
 
@@ -288,10 +296,14 @@ public:
 	void
 	setColor(RangePoint aFrom, RangePoint aTo, Color aColor)
 	{
-		int xFrom = std::floor(aFrom[0]);
+		int xFrom = std::max<int>(0, std::floor(aFrom[0] * mSampleRate[0]));
+		int yFrom = std::max<int>(0, std::floor(aFrom[1] * mSampleRate[1]));
+		int xTo = std::min<int>(mBuffer.shape()[0] - 1, std::ceil(aTo[0] * mSampleRate[0]));
+		int yTo = std::min<int>(mBuffer.shape()[1] - 1, std::ceil(aTo[1] * mSampleRate[1]));
+		/*int xFrom = std::floor(aFrom[0]);
 		int yFrom = std::floor(aFrom[1]);
 		int xTo = std::ceil(aTo[0]);
-		int yTo = std::ceil(aTo[1]);
+		int yTo = std::ceil(aTo[1]);*/
 		for (int j = yFrom; j <= yTo; ++j) {
 			for (int i = xFrom; i <= xTo; ++i) {
 				mBuffer[i][j] = aColor;
@@ -318,6 +330,7 @@ protected:
 	//std::vector<std::pair<Range, Color>> mPolygons;
 
 	Range mRange;
+	SampleRate mSampleRate;
 };
 
 } // namesapce tfw
