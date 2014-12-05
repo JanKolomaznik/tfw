@@ -31,6 +31,12 @@ public:
 
 	TransferFunction2D::Range
 	range() const;
+
+	void
+	setSamplingRate(TransferFunction2D::SamplingRate aSamplingRate);
+
+	TransferFunction2D::SamplingRate
+	samplingRate() const;
 private:
 	std::unique_ptr<Ui::TF2DOptionsDialog> mUi;
 };

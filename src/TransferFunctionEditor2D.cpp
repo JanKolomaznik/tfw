@@ -1,4 +1,6 @@
-#include "include/tfw/TransferFunctionEditor2D.hpp"
+#include "tfw/TransferFunctionEditor2D.hpp"
+#include "tfw/ColorChooserButton.hpp"
+
 #include "ui_TransferFunctionEditor2D.h"
 
 #include <QGraphicsItem>
@@ -40,6 +42,18 @@ TransferFunctionEditor2D::TransferFunctionEditor2D(QWidget *parent)
 	action->setCheckable(true);
 	manipulationModes->addAction(action);
 	QObject::connect(action, &QAction::toggled, [this](bool aToggled) { ui->mTransferFunctionView->setIsAdding(aToggled);});
+
+	auto button = new ColorChooserButton(this);
+	toolbar->addWidget(button);
+	button->setColor(QColor(0, 0, 255, 150));
+	ui->mTransferFunctionView->setCurrentColor(button->color());
+	button->enableAlpha(true);
+	QObject::connect(
+		button,
+		&ColorChooserButton::colorUpdated,
+		[this, button]() {
+			ui->mTransferFunctionView->setCurrentColor(button->color());
+		});
 
 	manipulationModes->setExclusive(true);
 
@@ -108,10 +122,16 @@ void TransferFunctionEditor2D::fillTransferFunction()
 			auto r = rectangle->boundingRect();
 			auto topLeft = rectangle->pos() + r.topLeft();
 			auto bottomRight = rectangle->pos() + r.bottomRight();
+			auto tfColor = TransferFunction2D::Color {
+					rectangle->color().redF(),
+					rectangle->color().greenF(),
+					rectangle->color().blueF(),
+					rectangle->color().alphaF(),
+				};
 			mTransferFunction->setColor(
 				TransferFunction2D::RangePoint{ float(topLeft.x()), float(topLeft.y()) },
 				TransferFunction2D::RangePoint{ float(bottomRight.x()), float(bottomRight.y()) },
-				TransferFunction2D::Color{ 0.0, 0.7, 0.8, 0.5 });
+				tfColor);
 		}
 	}
 

@@ -229,7 +229,7 @@ class TransferFunction2D : public ATransferFunction
 {
 public:
 	typedef float FloatingPoint;
-	typedef std::array<float, 2> SampleRate;
+	typedef std::array<float, 2> SamplingRate;
 	typedef std::array<float, 2> RangePoint;
 	typedef std::array<float, 4> Color;
 	typedef std::vector<RangePoint> Polygon;
@@ -238,7 +238,7 @@ public:
 	TransferFunction2D(
 			RangePoint aFrom = RangePoint{ 0.0, 0.0 },
 			RangePoint aTo = RangePoint{ 1.0, 1.0 },
-			SampleRate aSampleRate = { 1.0, 1.0})
+			SamplingRate aSampleRate = { 1.0, 1.0})
 		: mRange(aFrom, aTo)
 		, mSampleRate(aSampleRate)
 	{
@@ -279,13 +279,22 @@ public:
 	setRange(Range aRange)
 	{
 		mRange = aRange;
-		std::array<int, 2> newExtents = {{
-			int(mSampleRate[0] * (aRange.second[0] - aRange.first[0])),
-			int(mSampleRate[1] * (aRange.second[1] - aRange.first[1]))
-			}};
-		mBuffer.resize(newExtents); //TODO
+		resize();
 	}
 
+
+	void
+	setSamplingRate(SamplingRate aSamplingRate)
+	{
+		mSampleRate = aSamplingRate;
+		resize();
+	}
+
+	SamplingRate
+	samplingRate() const
+	{
+		return mSampleRate;
+	}
 
 	void
 	setColor(FloatingPoint aXValue, FloatingPoint aYValue, Color aColor)
@@ -323,6 +332,16 @@ public:
 	}
 
 protected:
+	void
+	resize()
+	{
+		std::array<int, 2> newExtents = {{
+			int(mSampleRate[0] * (mRange.second[0] - mRange.first[0])),
+			int(mSampleRate[1] * (mRange.second[1] - mRange.first[1]))
+			}};
+		mBuffer.resize(newExtents); //TODO
+	}
+
 	typedef boost::multi_array<Color, 2> Buffer;
 
 	Buffer mBuffer;
@@ -330,7 +349,7 @@ protected:
 	//std::vector<std::pair<Range, Color>> mPolygons;
 
 	Range mRange;
-	SampleRate mSampleRate;
+	SamplingRate mSampleRate;
 };
 
 } // namesapce tfw

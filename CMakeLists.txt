@@ -35,6 +35,7 @@ SET(${PROJECT_NAME}_HEADERS
 	"include/tfw/data/ATransferFunction.hpp"
 	"include/tfw/data/TransferFunctionLoading.hpp"
 	"include/tfw/data/TransferFunctionPalette.hpp"
+	"include/tfw/ColorChooserButton.hpp"
 	"include/tfw/Exceptions.hpp"
 	"include/tfw/GraphicsItems.hpp"
 	"include/tfw/PaletteWidget.hpp"

@@ -4,10 +4,13 @@
 #include <array>
 
 #include <QWidget>
+#include <QMenu>
 #include <QGraphicsItem>
 #include <QGraphicsObject>
 #include <QPainter>
 #include <QGraphicsScene>
+
+#include <QGraphicsSceneContextMenuEvent>
 
 #include "tfw/data/ATransferFunction.hpp"
 #include "tfw/data/AStatistics.hpp"
@@ -260,7 +263,24 @@ class AEditablePrimitive : public QGraphicsObject
 public:
 	AEditablePrimitive(QGraphicsItem * parent = nullptr)
 		: QGraphicsObject(parent)
+		, mColor(QColor(128, 200, 0))
 	{}
+
+	QColor
+	color() const
+	{
+		return mColor;
+	}
+
+	void
+	setColor(QColor aColor)
+	{
+		mColor = aColor;
+		update();
+	}
+
+protected:
+	QColor mColor;
 };
 
 
@@ -368,6 +388,14 @@ public:
 	enum { Type = UserType + 100 };
 	int type() const override { return Type; }
 
+	EditableRectangle(QGraphicsItem * parent = nullptr)
+		: AEditablePrimitive(parent)
+		, mAcceptsManipulation(true)
+	{
+		setFlag(QGraphicsItem::ItemIsMovable);
+		initManipulators();
+	}
+
 	EditableRectangle(QRectF aRect, QGraphicsItem * parent = nullptr)
 		: AEditablePrimitive(parent)
 		, mRectangle(aRect)
@@ -384,6 +412,14 @@ public:
 	}
 
 	void
+	setBoundingRect(QRectF aRect)
+	{
+		mRectangle = aRect;
+		updateManipulatorPositions();
+		update();
+	}
+
+	void
 	paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override
 	{
 		QPen pen(QColor(0, 0, 0));
@@ -391,7 +427,7 @@ public:
 		pen.setCosmetic(true);
 		painter->setPen(pen);
 
-		QBrush brush(QColor(128, 200, 0));
+		QBrush brush(mColor);
 		painter->setBrush(brush);
 		painter->drawRect(mRectangle);
 	}
@@ -418,10 +454,18 @@ protected:
 	void
 	updateManipulatorPositions()
 	{
+		std::array<bool, 4> blocked;
+		for (int i = 0; i < 4; ++i) {
+			blocked[i] = mManipulators[i]->signalsBlocked();
+			mManipulators[i]->blockSignals(true);
+		}
 		mManipulators[0]->setPos(mRectangle.topLeft());
 		mManipulators[1]->setPos(mRectangle.topRight());
 		mManipulators[2]->setPos(mRectangle.bottomLeft());
 		mManipulators[3]->setPos(mRectangle.bottomRight());
+		for (int i = 0; i < 4; ++i) {
+			mManipulators[i]->blockSignals(blocked[i]);
+		}
 	}
 
 	void
@@ -467,6 +511,60 @@ protected:
 	std::array<PositionManipulator *, 4> mManipulators;
 
 	bool mAcceptsManipulation;
+};
+
+
+class IColorSetup
+{
+public:
+	virtual QColor
+	currentColor() const
+	{
+		return mColor;
+	}
+
+	void
+	setCurrentColor(QColor aColor)
+	{
+		mColor = aColor;
+	}
+
+	QColor mColor;
+};
+
+
+template <typename TSceneItem>
+class SceneItemWithContextMenu: public TSceneItem
+{
+public:
+	SceneItemWithContextMenu(QGraphicsItem * parent = nullptr)
+		: TSceneItem(parent)
+		, mColorSetup(nullptr)
+	{}
+
+	void
+	setColorSetup(IColorSetup *aSetup)
+	{
+		mColorSetup = aSetup;
+	}
+
+protected:
+	void contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
+	{
+		QMenu menu;
+		QAction *applyColor = nullptr;
+		if (mColorSetup) {
+			applyColor = menu.addAction("Apply Color");
+		}
+		QAction *removeAction = menu.addAction("Remove");
+		QAction *selectedAction = menu.exec(event->screenPos());
+
+		if (selectedAction && selectedAction == applyColor) {
+			this->setColor(mColorSetup->currentColor());
+		}
+	}
+
+	IColorSetup *mColorSetup;
 };
 
 

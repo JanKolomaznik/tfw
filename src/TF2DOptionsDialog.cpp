@@ -33,6 +33,23 @@ TF2DOptionsDialog::setRange(TransferFunction2D::Range aRange) {
 	mUi->mRangeYToDoubleSpinBox->setValue(aRange.second[1]);
 }
 
+void
+TF2DOptionsDialog::setSamplingRate(TransferFunction2D::SamplingRate aSamplingRate)
+{
+
+	mUi->mXSampleRateDoubleSpinBox->setValue(aSamplingRate[0]);
+	mUi->mYSampleRateDoubleSpinBox->setValue(aSamplingRate[1]);
+}
+
+TransferFunction2D::SamplingRate
+TF2DOptionsDialog::samplingRate() const
+{
+	TransferFunction2D::SamplingRate rate;
+	rate[0] = mUi->mXSampleRateDoubleSpinBox->value();
+	rate[1] = mUi->mYSampleRateDoubleSpinBox->value();
+	return rate;
+}
+
 TransferFunction2D::Range
 TF2DOptionsDialog::range() const
 {

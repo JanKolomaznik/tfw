@@ -36,11 +36,13 @@ public:
 		TF2DOptionsDialog dialog;
 		dialog.setTFName(aTransferFunction.name());
 		dialog.setRange(aTransferFunction.range());
+		dialog.setSamplingRate(aTransferFunction.samplingRate());
 
 		succeeded = dialog.exec() == QDialog::Accepted;
 		if (succeeded) {
 			aTransferFunction.setName(dialog.tfName());
 			aTransferFunction.setRange(dialog.range());
+			aTransferFunction.setSamplingRate(dialog.samplingRate());
 		}
 	}
 

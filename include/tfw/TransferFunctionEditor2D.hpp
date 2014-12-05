@@ -44,7 +44,7 @@ protected:
 };
 
 template <typename TGraphicsView>
-class TransferFunction2DAddRectangleHandler : public TGraphicsView
+class TransferFunction2DAddRectangleHandler : public TGraphicsView, public IColorSetup
 {
 public:
 	TransferFunction2DAddRectangleHandler(QWidget *parent = nullptr)
@@ -82,9 +82,13 @@ protected:
 	void
 	mousePressEvent(QMouseEvent * event) override
 	{
-		if (mIsAdding) {
+		if (mIsAdding && event->button() == Qt::LeftButton) {
 			QRectF rect = this->mapToScene(QRect(event->pos(), QSize(100, 100))).boundingRect();
-			this->scene()->addItem(new EditableRectangle(rect));
+			auto editableRect = new SceneItemWithContextMenu<EditableRectangle>();
+			editableRect->setColor(currentColor());
+			editableRect->setBoundingRect(rect);
+			editableRect->setColorSetup(this);
+			this->scene()->addItem(editableRect);
 		} else {
 			TGraphicsView::mousePressEvent(event);
 		}

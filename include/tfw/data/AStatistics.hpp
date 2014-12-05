@@ -5,6 +5,9 @@
 #include <vector>
 #include <array>
 
+#include <QPointF>
+#include <QRectF>
+
 #include "tfw/Exceptions.hpp"
 
 namespace tfw {
