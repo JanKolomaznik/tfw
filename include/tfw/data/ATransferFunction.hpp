@@ -265,8 +265,10 @@ public:
 	Color
 	getColor(FloatingPoint aXValue, FloatingPoint aYValue) const
 	{
-		//return Color{ 0.0f, 0.5f, 1.0f, 0.5f };
-		return mBuffer[int(aXValue)][int(aYValue)]; //TODO
+		auto index = mapToContinuousIndex(RangePoint{aXValue, aYValue});
+		int x = std::min<int>(mBuffer.shape()[0] - 1, std::max<int>(0, std::round(index[0])));
+		int y = std::min<int>(mBuffer.shape()[1] - 1, std::max<int>(0, std::round(index[1])));
+		return mBuffer[x][y]; //TODO
 	}
 
 	const Range &
@@ -299,20 +301,21 @@ public:
 	void
 	setColor(FloatingPoint aXValue, FloatingPoint aYValue, Color aColor)
 	{
-		mBuffer[int(aXValue)][int(aYValue)] = aColor; //TODO
+		auto index = mapToContinuousIndex(RangePoint{aXValue, aYValue});
+		int x = std::min<int>(mBuffer.shape()[0] - 1, std::max<int>(0, std::round(index[0])));
+		int y = std::min<int>(mBuffer.shape()[1] - 1, std::max<int>(0, std::round(index[1])));
+		mBuffer[x][y] = aColor; //TODO
 	}
 
 	void
 	setColor(RangePoint aFrom, RangePoint aTo, Color aColor)
 	{
-		int xFrom = std::max<int>(0, std::floor(aFrom[0] * mSampleRate[0]));
-		int yFrom = std::max<int>(0, std::floor(aFrom[1] * mSampleRate[1]));
-		int xTo = std::min<int>(mBuffer.shape()[0] - 1, std::ceil(aTo[0] * mSampleRate[0]));
-		int yTo = std::min<int>(mBuffer.shape()[1] - 1, std::ceil(aTo[1] * mSampleRate[1]));
-		/*int xFrom = std::floor(aFrom[0]);
-		int yFrom = std::floor(aFrom[1]);
-		int xTo = std::ceil(aTo[0]);
-		int yTo = std::ceil(aTo[1]);*/
+		auto fromIndex = mapToContinuousIndex(aFrom);
+		auto toIndex = mapToContinuousIndex(aTo);
+		int xFrom = std::max<int>(0, std::floor(fromIndex[0]));
+		int yFrom = std::max<int>(0, std::floor(fromIndex[1]));
+		int xTo = std::min<int>(mBuffer.shape()[0] - 1, std::ceil(toIndex[0]));
+		int yTo = std::min<int>(mBuffer.shape()[1] - 1, std::ceil(toIndex[1]));
 		for (int j = yFrom; j <= yTo; ++j) {
 			for (int i = xFrom; i <= xTo; ++i) {
 				mBuffer[i][j] = aColor;
@@ -332,6 +335,17 @@ public:
 	}
 
 protected:
+	RangePoint
+	mapToContinuousIndex(RangePoint aPoint) const
+	{
+		RangePoint point;
+		point[0] = (aPoint[0] - mRange.first[0]) * mSampleRate[0];
+		point[1] = (aPoint[1] - mRange.first[1]) * mSampleRate[1];
+		return point;
+	}
+
+
+
 	void
 	resize()
 	{

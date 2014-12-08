@@ -70,7 +70,11 @@ void
 TransferFunctionEditor2D::setTransferFunction(TransferFunction2D &aTransferFunction)
 {
 	mTransferFunction = &aTransferFunction;
-	QRectF rect = QRectF(aTransferFunction.range().first[0], aTransferFunction.range().first[1], aTransferFunction.range().second[0], aTransferFunction.range().second[1]);
+	QRectF rect = QRectF(
+			aTransferFunction.range().first[0],
+			aTransferFunction.range().first[1],
+			aTransferFunction.range().second[0] - aTransferFunction.range().first[0],
+			aTransferFunction.range().second[1] - aTransferFunction.range().first[1]);
 	/*for (size_t i = 0; i < cChannelCount; ++i) {
 		mCurves[i].setBoundingRect(rect);
 		mCurves[i].clear();
