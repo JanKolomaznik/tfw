@@ -238,7 +238,7 @@ public:
 	TransferFunction2D(
 			RangePoint aFrom = RangePoint{ 0.0, 0.0 },
 			RangePoint aTo = RangePoint{ 1.0, 1.0 },
-			SamplingRate aSampleRate = { 1.0, 1.0})
+			SamplingRate aSampleRate = SamplingRate { 1.0, 1.0})
 		: mRange(aFrom, aTo)
 		, mSampleRate(aSampleRate)
 	{
