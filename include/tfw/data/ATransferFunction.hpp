@@ -350,8 +350,8 @@ protected:
 	resize()
 	{
 		std::array<int, 2> newExtents = {{
-			int(mSampleRate[0] * (mRange.second[0] - mRange.first[0])),
-			int(mSampleRate[1] * (mRange.second[1] - mRange.first[1]))
+			int((mRange.second[0] - mRange.first[0]) / mSampleRate[0]),
+			int((mRange.second[1] - mRange.first[1]) / mSampleRate[1])
 			}};
 		mBuffer.resize(newExtents); //TODO
 	}
