@@ -17,7 +17,9 @@ TF1DOptionsDialog::~TF1DOptionsDialog()
 
 std::string
 TF1DOptionsDialog::tfName() const {
-	return mUi->mNameLineEdit->text().toStdString();
+  // memory-leak hack for windows compatibility (maybe bug in QT)
+  std::string* name = new std::string(mUi->mNameLineEdit->text().toStdString());
+	return *name;
 }
 
 void TF1DOptionsDialog::setTFName(const std::string &aName)
