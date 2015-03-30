@@ -139,6 +139,29 @@ void TransferFunctionEditor2D::fillTransferFunction()
 		}
 	}
 
+  this->mTransferFunction->setEigenvaluesProcessing (
+    this->ui->primaryProcessCheckBox->checkState() == Qt::CheckState::Checked,
+    this->ui->secondaryProcessCheckBox->checkState() == Qt::CheckState::Checked
+  );
+
+  this->mTransferFunction->setPrimaryParameters(TransferFunction2D::EigenvalueProcessingParameters
+    {
+      this->ui->primaryAlphaSpinBox->value(),
+      this->ui->primaryBetaSpinBox->value(),
+      this->ui->primaryGammaSpinBox->value()
+    }
+  );
+  this->mTransferFunction->setPrimaryValuesMultiplier(this->ui->primaryMultiplierSpinBox->value());
+
+  this->mTransferFunction->setSecondaryParameters(TransferFunction2D::EigenvalueProcessingParameters
+    {
+      this->ui->secondaryAlphaSpinBox->value(),
+      this->ui->secondaryBetaSpinBox->value(),
+      this->ui->secondaryGammaSpinBox->value()
+    }
+  );
+  this->mTransferFunction->setSecondaryValuesMultiplier(this->ui->secondaryMultiplierSpinBox->value());
+
 
 	emit transferFunctionModified();
 }

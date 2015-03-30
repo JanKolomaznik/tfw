@@ -230,7 +230,8 @@ class TransferFunction2D : public ATransferFunction
 public:
 	typedef float FloatingPoint;
 	typedef std::array<float, 2> SamplingRate;
-	typedef std::array<float, 2> RangePoint;
+  typedef std::array<float, 2> RangePoint;
+  typedef std::array<float, 3> EigenvalueProcessingParameters;
 	typedef std::array<float, 4> Color;
 	typedef std::vector<RangePoint> Polygon;
 	typedef std::pair<RangePoint, RangePoint> Range;
@@ -334,6 +335,73 @@ public:
 		}
 	}
 
+  void
+  setEigenvaluesProcessing(bool processPrimary, bool processSecondary)
+  {
+    this->eigenvalueProcessPrimary = processPrimary;
+    this->eigenvalueProcessSecondary = processSecondary;
+  }
+
+  void
+  setPrimaryParameters(EigenvalueProcessingParameters processingParameters)
+  {
+    this->primaryProcessingParameters = processingParameters;
+  }
+
+  void
+  setPrimaryValuesMultiplier(int valuesMultiplier)
+  {
+    this->primaryValuesMultiplier = valuesMultiplier;
+  }
+
+  void
+  setSecondaryParameters(EigenvalueProcessingParameters processingParameters)
+  {
+    this->secondaryProcessingParameters = processingParameters;
+  }
+
+  void
+  setSecondaryValuesMultiplier(int valuesMultiplier)
+  {
+    this->secondaryValuesMultiplier = valuesMultiplier;
+  }
+
+  bool
+  getEigenvalueProcessPrimary() const
+  {
+    return this->eigenvalueProcessPrimary;
+  }
+
+  bool
+  getEigenvalueProcessSecondary() const
+  {
+    return this->eigenvalueProcessSecondary;
+  }
+
+  EigenvalueProcessingParameters
+  getPrimaryParameters() const
+  {
+    return this->primaryProcessingParameters;
+  }
+
+  int
+  getPrimaryValuesMultiplier() const
+  {
+    return this->primaryValuesMultiplier;
+  }
+
+  EigenvalueProcessingParameters
+  getSecondaryParameters() const
+  {
+    return this->secondaryProcessingParameters;
+  }
+
+  int
+  getSecondaryValuesMultiplier() const
+  {
+    return this->secondaryValuesMultiplier;
+  }
+
 protected:
 	RangePoint
 	mapToContinuousIndex(RangePoint aPoint) const
@@ -364,6 +432,14 @@ protected:
 
 	Range mRange;
 	SamplingRate mSampleRate;
+
+  EigenvalueProcessingParameters primaryProcessingParameters;
+  int primaryValuesMultiplier;
+  EigenvalueProcessingParameters secondaryProcessingParameters;
+  int secondaryValuesMultiplier;
+
+  bool eigenvalueProcessPrimary = false;
+  bool eigenvalueProcessSecondary = false;
 };
 
 } // namesapce tfw
